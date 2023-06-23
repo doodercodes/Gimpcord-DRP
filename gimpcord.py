@@ -1,14 +1,26 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-
 from gimpfu import *
-import os, sys
+import os, sys, traceback
 import datetime, time
 import discord_rpc
 
+
+def dotenv_config():
+    try:
+        dotenv_path = os.sep('../plug-ins/Dooder/gimpcord/.env')
+        # load_dotenv(dotenv_path=dotenv_path)
+        client_id = os.getenv('client_id')
+        return client_id
+
+    except (ImportError, TypeError, ValueError, IndexError,
+            NameError):
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        pdb.gimp_message(traceback.format_exception(exc_type, exc_value,
+                        exc_traceback))
+
 today = datetime.date.today() # Get today's date
 formatted_date = today.strftime("%d/%m/%Y") # Format the date as DD/MM/YYYY
-client_id = '1120074792935100567'
 
 def readyCallback(current_user):
     print('Our user: {}'.format(current_user))
@@ -40,17 +52,19 @@ def init_discord_rpc(image):
     while True:
         discord_rpc.update_presence(
             details=fileName,
-            state='Resolution: {}x{} | Layers: {}'.format(width,height,layers)
-            start=start,
-            large_image='default'
-        )
+            state='Resolution: {}x{} | Layers: {}'.format(width,height,layers),
+            start='{}'.format(start),
+            large_image='default')
         discord_rpc.update_connection()
         time.sleep(2)
         discord_rpc.run_callbacks()
 
 # discord_rpc.shutdown()
 def gimpcord(image, drawable):
+    client_id = dotenv_config()
     init_discord_rpc(image)
+
+
 
 
 # Registration
