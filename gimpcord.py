@@ -26,28 +26,31 @@ callbacks = {
         'error': errorCallback,
     }
 
-def init_discord_rpc():
+def init_discord_rpc(image):
     discord_rpc.initialize(client_id, callbacks=callbacks, log=False)
     pdb.gimp_message("Connected to Discord RPC")
     start = time.time()
+
+    fileName = image.filename
+    active = image.active_layer
+    width = image.width
+    height = image.height
+    layers = len(image.layers)
+
     while True:
         discord_rpc.update_presence(
-            **{
-                'details': 'Connected',
-                'start_timestamp': start,
-                'large_image_key': 'default'
-            }
+            details=fileName,
+            state='Resolution: {}x{} | Layers: {}'.format(width,height,layers)
+            start=start,
+            large_image='default'
         )
-
         discord_rpc.update_connection()
         time.sleep(2)
         discord_rpc.run_callbacks()
 
 # discord_rpc.shutdown()
-
-
 def gimpcord(image, drawable):
-    init_discord_rpc()
+    init_discord_rpc(image)
 
 
 # Registration
