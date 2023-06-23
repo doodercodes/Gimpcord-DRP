@@ -41,8 +41,8 @@ callbacks = {
 def init_discord_rpc(image):
     discord_rpc.initialize(client_id, callbacks=callbacks, log=False)
     pdb.gimp_message("Connected to Discord RPC")
-    start = time.time()
 
+    start = time.time()
     fileName = image.filename
     active = image.active_layer
     width = image.width
