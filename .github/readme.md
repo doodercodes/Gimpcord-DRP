@@ -1,3 +1,7 @@
-# Healthy contributions
+# A GIMP plug-in to show your workspace information as a Discord "Now Playing" status. (Discord Rich Presence)
 
-https://docs.github.com/en/github/building-a-strong-community/creating-a-default-community-health-file
+Windows Installation:
+
+Linux Installation:
+
+macOS Installation:
