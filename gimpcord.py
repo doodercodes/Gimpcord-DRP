@@ -1,44 +1,53 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
+import datetime
+import sys, traceback
+import os, io, time
 from gimpfu import *
-import os, sys, traceback
-import datetime, time
 import discord_rpc
 
+class HandleErrors:
+    def __init__(self):
+        self.exc_type, self.exc_value, self.exc_traceback = sys.exc_info()
 
-def dotenv_config():
-    try:
-        dotenv_path = os.sep('../plug-ins/Dooder/gimpcord/.env')
-        # load_dotenv(dotenv_path=dotenv_path)
-        client_id = os.getenv('client_id')
-        return client_id
+    def throw_GIMP_traceback(self):
+        error_message = "".join(traceback.format_exception(self.exc_type, self.exc_value, self.exc_traceback))
+        pdb.gimp_message(error_message)
 
-    except (ImportError, TypeError, ValueError, IndexError,
-            NameError):
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        pdb.gimp_message(traceback.format_exception(exc_type, exc_value,
-                        exc_traceback))
+class Echo:
+    def __init__(self):
+        pass
+    def echo(self,param1):
+        pdb.gimp_message(param1)
 
+echo = Echo()
 today = datetime.date.today() # Get today's date
 formatted_date = today.strftime("%d/%m/%Y") # Format the date as DD/MM/YYYY
-
-def readyCallback(current_user):
-    print('Our user: {}'.format(current_user))
-
-def disconnectedCallback(codeno, codemsg):
-    print('Disconnected from Discord rich presence RPC. Code {}: {}'.format( codeno, codemsg))
-
-def errorCallback(errno, errmsg):
-    print('An error occurred! Error {}: {}'.format(errno, errmsg))
-
-# Note: 'event_name': callback
 callbacks = {
         'ready': readyCallback,
         'disconnected': disconnectedCallback,
         'error': errorCallback,
     }
 
-def init_discord_rpc(image):
+def dotenv_config():
+        dotenv_path = os.path.abspath("/plug-ins/Dooder/gimpcord/.env")
+        cwd = os.getcwd()
+        client_id = os.getenv('client_id') # null
+        echo.echo("ayy")
+        return client_id
+
+def readyCallback(current_user):
+    print('Our user: {}'.format( current_user ))
+
+def disconnectedCallback(codeno, codemsg):
+    print('Disconnected from Discord rich presence RPC. Code {}: {}'.format( codeno, codemsg ))
+
+def errorCallback(errno, errmsg):
+    print('An error occurred! Error {}: {}'.format( errno, errmsg ))
+
+# Note: 'event_name': callback
+
+def init_discord_rpc(image,client_id):
     discord_rpc.initialize(client_id, callbacks=callbacks, log=False)
     pdb.gimp_message("Connected to Discord RPC")
 
@@ -62,10 +71,7 @@ def init_discord_rpc(image):
 # discord_rpc.shutdown()
 def gimpcord(image, drawable):
     client_id = dotenv_config()
-    init_discord_rpc(image)
-
-
-
+    init_discord_rpc(image,client_id)
 
 # Registration
 whoiam="\n"+os.path.abspath(sys.argv[0])
