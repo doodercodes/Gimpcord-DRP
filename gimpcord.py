@@ -23,18 +23,12 @@ class Echo:
 echo = Echo()
 today = datetime.date.today() # Get today's date
 formatted_date = today.strftime("%d/%m/%Y") # Format the date as DD/MM/YYYY
+# Note: 'event_name': callback
 callbacks = {
         'ready': readyCallback,
         'disconnected': disconnectedCallback,
         'error': errorCallback,
     }
-
-def dotenv_config():
-        dotenv_path = os.path.abspath("/plug-ins/Dooder/gimpcord/.env")
-        cwd = os.getcwd()
-        client_id = os.getenv('client_id') # null
-        echo.echo("ayy")
-        return client_id
 
 def readyCallback(current_user):
     print('Our user: {}'.format( current_user ))
@@ -45,7 +39,12 @@ def disconnectedCallback(codeno, codemsg):
 def errorCallback(errno, errmsg):
     print('An error occurred! Error {}: {}'.format( errno, errmsg ))
 
-# Note: 'event_name': callback
+def dotenv_config():
+        dotenv_path = os.path.abspath("/plug-ins/Dooder/gimpcord/.env")
+        cwd = os.getcwd()
+        client_id = os.getenv('client_id') # null
+        echo.echo("ayy")
+        return client_id
 
 def init_discord_rpc(image,client_id):
     discord_rpc.initialize(client_id, callbacks=callbacks, log=False)
