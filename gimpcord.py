@@ -1,10 +1,11 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 import datetime
-import sys, traceback
+import sys, traceback, trace
 import os, io, time
 from gimpfu import *
 import discord_rpc
+pdb = gimp.pdb
 
 class HandleErrors:
     def __init__(self):
@@ -17,13 +18,18 @@ class HandleErrors:
 class Echo:
     def __init__(self):
         pass
-    def echo(self,param1):
-        pdb.gimp_message('{}'.format(param1))
+    def echo(self,param):
+        pdb.gimp_message(param)
+    def trace(self,msg):
+        lineNumber = sys._getframe().f_lineno
+        cwd = os.getcwd()
+        file = os.path.join(cwd,'gimpcord.py')
+        pdb.gimp_message('{}\r\nLine: #{}\r\nFile: {}\r\n'.format(msg,lineNumber,file))
 
-echo = Echo()
 
 today = datetime.date.today() # Get today's date
 formatted_date = today.strftime("%d/%m/%Y") # Format the date as DD/MM/YYYY
+echo = Echo()
 
 def readyCallback(current_user):
     print('Our user: {}'.format( current_user ))
@@ -45,7 +51,7 @@ def load_client_id():
         dotenv_path = os.path.abspath("/plug-ins/Dooder/gimpcord/.env")
         client_id = os.getenv('client_id')
         if not client_id:
-            echo.echo("Null")
+            echo.trace("client_id = Null")
             raise ValueError('Missing client ID in .env file')
         return client_id
 
@@ -74,7 +80,6 @@ def init_discord_rpc(image,client_id):
 def gimpcord(image, drawable):
     client_id = load_client_id()
     init_discord_rpc(image,client_id)
-
 
 # Registration
 whoiam="\n"+os.path.abspath(sys.argv[0])
