@@ -18,17 +18,12 @@ class Echo:
     def __init__(self):
         pass
     def echo(self,param1):
-        pdb.gimp_message(param1)
+        pdb.gimp_message('{}'.format(param1))
 
 echo = Echo()
+
 today = datetime.date.today() # Get today's date
 formatted_date = today.strftime("%d/%m/%Y") # Format the date as DD/MM/YYYY
-# Note: 'event_name': callback
-callbacks = {
-        'ready': readyCallback,
-        'disconnected': disconnectedCallback,
-        'error': errorCallback,
-    }
 
 def readyCallback(current_user):
     print('Our user: {}'.format( current_user ))
@@ -39,11 +34,19 @@ def disconnectedCallback(codeno, codemsg):
 def errorCallback(errno, errmsg):
     print('An error occurred! Error {}: {}'.format( errno, errmsg ))
 
-def dotenv_config():
+# Note: 'event_name': callback
+callbacks = {
+        'ready': readyCallback,
+        'disconnected': disconnectedCallback,
+        'error': errorCallback,
+    }
+
+def load_client_id():
         dotenv_path = os.path.abspath("/plug-ins/Dooder/gimpcord/.env")
-        cwd = os.getcwd()
-        client_id = os.getenv('client_id') # null
-        echo.echo("ayy")
+        client_id = os.getenv('client_id')
+        if not client_id:
+            echo.echo("Null")
+            raise ValueError('Missing client ID in .env file')
         return client_id
 
 def init_discord_rpc(image,client_id):
@@ -69,8 +72,9 @@ def init_discord_rpc(image,client_id):
 
 # discord_rpc.shutdown()
 def gimpcord(image, drawable):
-    client_id = dotenv_config()
+    client_id = load_client_id()
     init_discord_rpc(image,client_id)
+
 
 # Registration
 whoiam="\n"+os.path.abspath(sys.argv[0])
