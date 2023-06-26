@@ -12,7 +12,7 @@ pdb = gimp.pdb
 class HandleErrors:
     def __init__(self):
         self.exc_type, self.exc_value, self.exc_traceback = sys.exc_info()
-    def throw_GIMP_traceback(self):
+    def throwTraceback(self):
         error_message = ' '.join( traceback.format_exception( self.exc_type, self.exc_value, self.exc_traceback ))
         pdb.gimp_message(error_message)
 
@@ -52,13 +52,15 @@ callbacks = {
     }
 
 def load_client_id():
-        dotenv_file = os.path.abspath( '/plug-ins/Dooder/gimpcord/.env' )
-        client_id = os.getenv( 'client_id' )
+        path_to_file = 'C:\Users\User\AppData\Roaming\GIMP\\2.10\plug-ins\Dooder\gimpcord\config.txt'
+        file = open(path_to_file, "r+")
+        file.seek(9)
+        read_line = file.readline()
+        client_id = read_line
 
         if not client_id:
-            echo.trace( 'Missing client ID in .env file' )
+            echo.trace( 'ClientID is not set or is invalid.' )
 
-        echo.trace( 'client ID: {}'.format(client_id) )
         return client_id
 
 def init_discord_rpc(image,client_id):
@@ -83,8 +85,6 @@ def init_discord_rpc(image,client_id):
             discord_rpc.update_connection()
             time.sleep(2)
             discord_rpc.run_callbacks()
-    else:
-        echo.echo("Not connected to Discord")
 
 
 # discord_rpc.shutdown()
