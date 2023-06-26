@@ -44,44 +44,26 @@ def disconnectedCallback( codeno, codemsg ):
 def errorCallback( errno, errmsg ):
     print('An error occurred! Error {}: {}'.format( errno, errmsg ))
 
+# Note: 'event_name': callback
 callbacks = {
         'ready': readyCallback,
         'disconnected': disconnectedCallback,
         'error': errorCallback,
     }
 
-def readConfigFile():
-    path_to_config = 'C:\Users\User\AppData\Roaming\GIMP\\2.10\plug-ins\Dooder\gimpcord\config.txt'
-    with open(path_to_config, "r+") as file:
-        lines = [line.strip() for line in file]
-    return lines
+def load_client_id():
+        path_to_file = 'C:\Users\User\AppData\Roaming\GIMP\\2.10\plug-ins\Dooder\gimpcord\config.txt'
+        file = open(path_to_file, "r+")
+        file.seek(9)
+        read_line = file.readline()
+        client_id = read_line
 
-        # for i in file:
-        #     # echo.trace(i)
-        #     split = i.split(":")
-        #     return split[1].replace(" ", "")
+        if not client_id:
+            echo.trace( 'ClientID is not set or is invalid.' )
 
-def loadClientID():
-        read_config = readConfigFile()
+        return client_id
 
-        # process the lines
-        for line in read_config:
-            split = line.split(":")
-            echo.echo(split)
-
-        # client_id = config_file
-        # echo.trace(read_config)
-        # if not file.seek(8) or file.seek(9):
-        #     echo.trace( 'ClientID is not set or is invalid.' )
-        #     return None
-        # else:
-        #     file.seek(9) or file.seek(9)
-        #     client_id = file.readline()
-
-        # return client_id
-
-def initDiscordRPC(image):
-    client_id = loadClientID()
+def init_discord_rpc(image,client_id):
     if client_id != None:
         echo.echo("Connected to Discord RPC")
         discord_rpc.initialize( client_id, callbacks=callbacks, log=False )
@@ -104,9 +86,11 @@ def initDiscordRPC(image):
             time.sleep(2)
             discord_rpc.run_callbacks()
 
+
 # discord_rpc.shutdown()
 def gimpcord(image, drawable):
-    initDiscordRPC(image)
+    client_id = load_client_id()
+    init_discord_rpc(image,client_id)
 
 # Registration
 whoiam="\n"+os.path.abspath(sys.argv[0])
