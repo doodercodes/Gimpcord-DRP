@@ -23,10 +23,10 @@ class Echo:
         text = ' '.join(map( str, args ))
         pdb.gimp_message(text)
     def trace( self, *args ):
+        text = ' '.join( map( str, args ))
         line_number = sys._getframe(1).f_lineno
         cwd = os.getcwd()
         file = os.path.join( cwd, 'gimpcord.py' )
-        text = ' '.join( map( str, args ))
         pdb.gimp_message('{}\r\nLine: #{}\r\nFile: {}\r\n'
                         .format( text, line_number,file ))
 
@@ -59,10 +59,12 @@ def readConfigFile():
 
 def loadClientID():
         read_config = readConfigFile()
-        echo.echo(read_config)
+        client_id = read_config[0][1]
+        return client_id
 
 def initDiscordRPC(image):
     client_id = loadClientID()
+
     if client_id != None:
         echo.echo("Connected to Discord RPC")
         discord_rpc.initialize( client_id, callbacks=callbacks, log=False )
