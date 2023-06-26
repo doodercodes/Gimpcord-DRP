@@ -53,7 +53,8 @@ callbacks = {
 def readConfigFile():
     path_to_config = 'C:\Users\User\AppData\Roaming\GIMP\\2.10\plug-ins\Dooder\gimpcord\config.txt'
     with open(path_to_config, "r+") as file:
-        lines = [line.strip() for line in file]
+        lines = [line.strip().replace(" ", "") for line in file]
+    echo.echo(lines)
     return lines
 
 def loadClientID():
