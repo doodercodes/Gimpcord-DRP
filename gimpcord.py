@@ -53,15 +53,13 @@ callbacks = {
 def readConfigFile():
     path_to_config = 'C:\Users\User\AppData\Roaming\GIMP\\2.10\plug-ins\Dooder\gimpcord\config.txt'
     with open(path_to_config, "r+") as file:
-        lines = [line.strip().replace(" ", "") for line in file]
-    echo.echo(lines)
+        lines = [line.strip().replace(" ", "").split(":") for line in file]
+
     return lines
 
 def loadClientID():
         read_config = readConfigFile()
-        for line in read_config:
-            split = line.split(":")
-            echo.echo(split)
+        echo.echo(read_config)
 
 def initDiscordRPC(image):
     client_id = loadClientID()
