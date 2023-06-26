@@ -44,26 +44,26 @@ def disconnectedCallback( codeno, codemsg ):
 def errorCallback( errno, errmsg ):
     print('An error occurred! Error {}: {}'.format( errno, errmsg ))
 
-# Note: 'event_name': callback
 callbacks = {
         'ready': readyCallback,
         'disconnected': disconnectedCallback,
         'error': errorCallback,
     }
 
-def load_client_id():
-        path_to_file = 'C:\Users\User\AppData\Roaming\GIMP\\2.10\plug-ins\Dooder\gimpcord\config.txt'
-        file = open(path_to_file, "r+")
-        file.seek(9)
-        read_line = file.readline()
-        client_id = read_line
+def readConfigFile():
+    path_to_config = 'C:\Users\User\AppData\Roaming\GIMP\\2.10\plug-ins\Dooder\gimpcord\config.txt'
+    with open(path_to_config, "r+") as file:
+        lines = [line.strip() for line in file]
+    return lines
 
-        if not client_id:
-            echo.trace( 'ClientID is not set or is invalid.' )
+def loadClientID():
+        read_config = readConfigFile()
+        for line in read_config:
+            split = line.split(":")
+            echo.echo(split)
 
-        return client_id
-
-def init_discord_rpc(image,client_id):
+def initDiscordRPC(image):
+    client_id = loadClientID()
     if client_id != None:
         echo.echo("Connected to Discord RPC")
         discord_rpc.initialize( client_id, callbacks=callbacks, log=False )
@@ -86,11 +86,9 @@ def init_discord_rpc(image,client_id):
             time.sleep(2)
             discord_rpc.run_callbacks()
 
-
 # discord_rpc.shutdown()
 def gimpcord(image, drawable):
-    client_id = load_client_id()
-    init_discord_rpc(image,client_id)
+    initDiscordRPC(image)
 
 # Registration
 whoiam="\n"+os.path.abspath(sys.argv[0])
