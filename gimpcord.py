@@ -45,10 +45,10 @@ def errorCallback( errno, errmsg ):
     print('An error occurred! Error {}: {}'.format( errno, errmsg ))
 
 callbacks = {
-        'ready': readyCallback,
-        'disconnected': disconnectedCallback,
-        'error': errorCallback,
-    }
+    'ready': readyCallback,
+    'disconnected': disconnectedCallback,
+    'error': errorCallback,
+}
 
 def readConfigFile():
     path_to_config = 'C:\Users\User\AppData\Roaming\GIMP\\2.10\plug-ins\Dooder\gimpcord\config.txt'
@@ -58,10 +58,10 @@ def readConfigFile():
     return lines
 
 def loadClientID():
-        read_config = readConfigFile()
-        client_id = read_config[0][1]
+    read_config = readConfigFile()
+    client_id = read_config[0][1]
 
-        return client_id
+    return client_id
 
 def initDiscordRPC(image):
     client_id = loadClientID()
