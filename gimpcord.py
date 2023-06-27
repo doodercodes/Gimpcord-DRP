@@ -60,10 +60,12 @@ def readConfigFile():
 def loadClientID():
         read_config = readConfigFile()
         client_id = read_config[0][1]
+
         return client_id
 
 def initDiscordRPC(image):
     client_id = loadClientID()
+    echo.echo(client_id)
 
     if client_id != None:
         echo.echo("Connected to Discord RPC")
@@ -86,6 +88,8 @@ def initDiscordRPC(image):
             discord_rpc.update_connection()
             time.sleep(2)
             discord_rpc.run_callbacks()
+    else:
+        pass
 
 # discord_rpc.shutdown()
 def gimpcord(image, drawable):
