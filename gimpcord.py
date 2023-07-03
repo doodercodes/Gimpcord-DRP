@@ -8,6 +8,9 @@ from gimpfu import *
 import discord_rpc
 
 pdb = gimp.pdb
+today = datetime.date.today() # Get today's date
+formatted_date = today.strftime( "%d/%m/%Y" ) # Format the date as DD/MM/YYYY
+echo = Echo()
 
 class HandleErrors:
     def __init__(self):
@@ -30,9 +33,6 @@ class Echo:
         pdb.gimp_message('{}\r\nLine: #{}\r\nFile: {}\r\n'
                         .format( text, line_number,file ))
 
-today = datetime.date.today() # Get today's date
-formatted_date = today.strftime( "%d/%m/%Y" ) # Format the date as DD/MM/YYYY
-echo = Echo()
 
 def readyCallback( current_user ):
     print('Our user: {}'.format( current_user ))
