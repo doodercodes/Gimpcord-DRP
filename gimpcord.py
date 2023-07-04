@@ -22,9 +22,15 @@ desc=""
 
 class HandleErrors:
     def __init__(self):
+        # self.exc_type, self.exc_value, and self.exc_traceback
+        # are instance variables that store the exception information.
+        # sys.exc_info() returns information about the current exception being handled
         self.exc_type, self.exc_value, self.exc_traceback = sys.exc_info()
+    # This method throws the traceback of the exception as an error message
     def throwTraceback(self):
-        error_message = ' '.join( traceback.format_exception( self.exc_type, self.exc_value, self.exc_traceback ))
+        error_message = ' '.join( traceback.format_exception( self.exc_type,
+                                self.exc_value, self.exc_traceback ))
+        # displays the error message in the GIMP message console
         pdb.gimp_message(error_message)
 
 class Echo:
@@ -35,6 +41,7 @@ class Echo:
         pdb.gimp_message(text)
     def trace( self, *args ):
         text = ' '.join( map( str, args ))
+        # retrieves the line number of the calling frame
         line_number = sys._getframe(1).f_lineno
         cwd = os.getcwd()
         file = os.path.join( cwd, 'gimpcord.py' )
@@ -92,7 +99,7 @@ def getClientID():
 
 def initDiscordRPC(image, drawable, clientID):
     """
-
+    Check for ClientID and connect discord_rpc
     """
     if clientID == "":
         echo.echo("Client ID is empty or incorrect.\r\nFailed to connect to Discord.\r\n\r\nPlease reactivate the plug-in at " + menu + " and try again.\r\nAlternatively, you can re-show the last used filter by using the default keybinding 'Shift+Ctrl+F' to try entering in your ID again.")
@@ -101,7 +108,6 @@ def initDiscordRPC(image, drawable, clientID):
         echo.echo("Connected to Discord RPC")
         discord_rpc.initialize( clientID, callbacks=callbacks, log=False )
         setClientID(clientID)
-
 
         start = time.time()
         file_name = image.filename
@@ -144,7 +150,6 @@ def register_plugin():
         "*",
         [
                 (PF_STRING, "text", "ClientID: ", " "),
-
         ],
         [],  # No return values
         gimpcord, # Your plugin function
