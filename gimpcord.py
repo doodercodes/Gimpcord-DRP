@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python2
 # -*- coding: utf-8 -*-
 
 import datetime
@@ -10,7 +10,15 @@ import discord_rpc
 pdb = gimp.pdb
 today = datetime.date.today() # Get today's date
 formatted_date = today.strftime( "%d/%m/%Y" ) # Format the date as DD/MM/YYYY
-echo = Echo()
+whoiam="\n"+os.path.abspath(sys.argv[0])
+plugin_name="drp"
+author="Dooder"
+where="<Image>"
+menu="/Filters/Discord/drp"
+menu_path=where+menu
+path_to_config = 'C:\Users\User\AppData\Roaming\GIMP\\2.10\plug-ins\Dooder\gimpcord\config.txt'
+date_of_creation=formatted_date
+desc=""
 
 class HandleErrors:
     def __init__(self):
@@ -32,7 +40,7 @@ class Echo:
         file = os.path.join( cwd, 'gimpcord.py' )
         pdb.gimp_message('{}\r\nLine: #{}\r\nFile: {}\r\n'
                         .format( text, line_number,file ))
-
+echo = Echo()
 
 def readyCallback( current_user ):
     print('Our user: {}'.format( current_user ))
@@ -51,25 +59,49 @@ callbacks = {
 }
 
 def readConfigFile():
-    path_to_config = 'C:\Users\User\AppData\Roaming\GIMP\\2.10\plug-ins\Dooder\gimpcord\config.txt'
+    """
+    Open config.txt for reading. Create
+    the file if it does not exist
+    Return: list[list[str]]
+    """
     with open(path_to_config, "r+") as file:
         lines = [line.strip().replace(" ", "").split(":") for line in file]
 
     return lines
 
-def loadClientID():
+def setClientID(clientID):
+    """
+    Update the clientID in config.txt
+    """
+    lines = readConfigFile()
+    lines[0][1] = clientID
+
+    with open(path_to_config, "w") as file:
+        for line in lines:
+            file.write(":".join(line) + "\n")
+
+def getClientID():
+    """
+    Get the clientID from config.txt
+    Return: str
+    """
     read_config = readConfigFile()
     client_id = read_config[0][1]
 
     return client_id
 
-def initDiscordRPC(image):
-    client_id = loadClientID()
-    echo.echo(client_id)
+def initDiscordRPC(image, drawable, clientID):
+    """
 
-    if client_id != None:
+    """
+    if clientID == "":
+        echo.echo("Client ID is empty or incorrect.\r\nFailed to connect to Discord.\r\n\r\nPlease reactivate the plug-in at " + menu + " and try again.\r\nAlternatively, you can re-show the last used filter by using the default keybinding 'Shift+Ctrl+F' to try entering in your ID again.")
+
+    else:
         echo.echo("Connected to Discord RPC")
-        discord_rpc.initialize( client_id, callbacks=callbacks, log=False )
+        discord_rpc.initialize( clientID, callbacks=callbacks, log=False )
+        setClientID(clientID)
+
 
         start = time.time()
         file_name = image.filename
@@ -88,33 +120,32 @@ def initDiscordRPC(image):
             discord_rpc.update_connection()
             time.sleep(2)
             discord_rpc.run_callbacks()
-    else:
-        pass
 
 # discord_rpc.shutdown()
-def gimpcord(image, drawable):
-    initDiscordRPC(image)
 
-# Registration
-whoiam="\n"+os.path.abspath(sys.argv[0])
-author="Dooder"
-menu="<Image>/Filters/Discord/drp"
-pluginName="drp"
-dateOfCreation=formatted_date
-desc=""
+def gimpcord(image, drawable, clientID):
+    """
+    Main plug-in function
+    """
+    initDiscordRPC(image, drawable, clientID)
 
 def register_plugin():
-    # Register the plugin
+    """
+    Register the plugin
+    """
     register(
-        pluginName,  # Unique name for your plugin
+        plugin_name,  # Unique name for your plugin
         desc+whoiam, # The label that appears in GIMP's menus
         desc,  # Description of your plugin
         author, # Your name as the plugin author
         author, # Copyright information
-        dateOfCreation, # Date of the plugin
-        menu,
+        date_of_creation, # Date of the plugin
+        menu_path,
         "*",
-        [],  # No input parameters required
+        [
+                (PF_STRING, "text", "ClientID: ", " "),
+
+        ],
         [],  # No return values
         gimpcord, # Your plugin function
         )
