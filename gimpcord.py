@@ -117,9 +117,6 @@ def initDiscordRPC(image, drawable, clientID):
         file_name = ""
 
         while True:
-            image_list = gimp.image_list()
-            active_image = image_list[0]
-
             # # No open images
             # if len(image_list) == 0:
             #     file_name = "[No Open Image]"
@@ -128,11 +125,12 @@ def initDiscordRPC(image, drawable, clientID):
             #     # Get the active image
             #     if active_image is None:
             #         continue
-
-            width = image.width
-            height = image.height
-            layers = len(image.layers)
-            # active = image.active_layer
+            image_list = gimp.image_list()
+            active_image = image_list[0]
+            width = active_image.width
+            height = active_image.height
+            layers = len(active_image.layers)
+            # active_layer = active_image.active_layer
 
             if active_image.filename is None:
                 file_name = "[Untitled]"
