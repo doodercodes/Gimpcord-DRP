@@ -117,16 +117,27 @@ def initDiscordRPC(image, drawable, clientID):
         file_name = ""
 
         while True:
-            image = gimp.image_list()[0]  # Get the active image
+            image_list = gimp.image_list()
+            active_image = image_list[0]
+
+            # # No open images
+            # if len(image_list) == 0:
+            #     file_name = "[No Open Image]"
+            #     width, height, layers = 0, 0, 0
+            # else:
+            #     # Get the active image
+            #     if active_image is None:
+            #         continue
+
             width = image.width
             height = image.height
             layers = len(image.layers)
             # active = image.active_layer
 
-            if image.filename is None:
+            if active_image.filename is None:
                 file_name = "[Untitled]"
             else:
-                file_name = image.filename
+                file_name = active_image.filename
 
             discord_rpc.update_presence(
                 details = file_name,
@@ -138,6 +149,7 @@ def initDiscordRPC(image, drawable, clientID):
             discord_rpc.update_connection()
             time.sleep(2)
             discord_rpc.run_callbacks()
+
 # discord_rpc.shutdown()
 
 def gimpcord(image, drawable, clientID):
